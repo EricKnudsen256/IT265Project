@@ -38,6 +38,7 @@ public class UIFunctions : MonoBehaviour
 
     int introSequence;
     int level1Progress;
+    int tutorialProgress;
 
     int money;
     int shares;
@@ -49,7 +50,8 @@ public class UIFunctions : MonoBehaviour
     int maxHeight = 45;
     int maxWidth = 120;
 
-    int [] priceArray = { 10, 12, 15, 20, 17, 19, 24, 28, 22, 24, 30};
+    int[] priceArray = { 10, 12, 15, 20, 17, 19, 24, 28, 22, 24, 30 };
+    int[] priceArrayTutorial = { 15, 22, 25, 20, 17, 10, 12, 17, 19, 25, 30 };
 
     Scene currentScene;
 
@@ -75,6 +77,42 @@ public class UIFunctions : MonoBehaviour
                 backButton.SetActive(false);
                 break;
             case "02TutorialScene":
+                level1Text.fontSize = 20;
+                level1Text.alignment = TextAlignmentOptions.Center;
+                level1Text.text = "Welcome to Simple Stocks!\nIn this tutorial, will be going over how to navigate through this program and use it to learn about stocks.\n" +
+                    "To continue, press the NEXT button below.";
+
+                buyButton.SetActive(false);
+                sellButton.SetActive(false);
+                backButton1.SetActive(false);
+                returnButton.SetActive(false);
+                testChart.SetActive(false);
+
+                money = 100;
+                passed = false;
+
+                for (int i = 0; i < priceArrayTutorial.Length; i++)
+                {
+                    pos = new Vector3(minWidth + ((maxWidth - minWidth) / 10) * i,
+                        minHeight + ((maxHeight - minHeight)) * (priceArrayTutorial[i] - 10) / 20,
+                        0);
+
+
+
+                    currentSphere = Instantiate(circlePrefab, pos, Quaternion.identity);
+
+                    currentSphere.transform.SetParent(line1.transform);
+
+                    if (i != 0)
+                    {
+
+                        GameObject cyl = CreateCylinderBetweenPoints(pos, pos2, 8);
+
+                        cyl.transform.SetParent(line1.transform);
+                    }
+
+                    pos2 = pos;
+                }
                 break;
             case "03Level01Scene":
                 level1Text.fontSize = 32;
@@ -255,7 +293,7 @@ public class UIFunctions : MonoBehaviour
                 break;
             case 3:
                 level1Text.fontSize = 20;
-                level1Text.text = "This leads to our first concept of buying stocks: buy low and sell high. If you buy 10 shares of a company, let's call them ABC, for $10 a share, you will spend $100 in total. Then, 1 year later, the price of a single share of ABC is $20. If you sell all 10 of your shares, you will end up with $200, $100 dollars more than you started with.";
+                level1Text.text = "This leads to our first concept of buying stocks: buy low and sell high. If you buy 10 shares of a company, let's call them ABC, for $10 a share, you will spend $100 in total. Then, 1 year later, the price of a single share of ABC is $20. If you sell all 10 of your shares, you will end up with $200, $100 more than you started with.";
                 break;
             case 4:
                 level1Text.fontSize = 32;
@@ -268,8 +306,8 @@ public class UIFunctions : MonoBehaviour
                 level1Text.text = "Below, you can see a table with a line and some numbers on it. This is called a stock chart. This is the most common tool you are going to see as you start off with investing. This chart shows how the price of a stock changes over time. The actual time frame will vary between charts, and it should say the time frame on whatever chart you are looking at.";
                 break;
             case 6:
-                level1Text.fontSize = 20;
-                level1Text.text = "The line on the chart shows the current price of the stock. On Monday, XYZ started just above $10. Then it rose to about $25, before falling back down to $20 at the start of Tuesday. From Tuesday to Wednesday, XYZ slowly grew to about $25, before quickly dropping back down to just above $10 at the start of Thursday. Then, XYZ quickly grew to about $30 by Friday. If you buy a share of XYZ when the line is low, and then sell it when the line is higher, you will make a profit.";
+                level1Text.fontSize = 18;
+                level1Text.text = "The line on the chart shows the current price of the stock. On Monday, XYZ started just at $10. Then it rose to about $22, before falling back down to 17 on Tuesday. From Tuesday to Wednesday, XYZ slowly grew to about $28, before quickly dropping back down to around $22 at the start of Thursday. Then, XYZ quickly grew to about $30 by Friday. If you buy a share of XYZ when the line is low, and then sell it when the line is higher, you will make a profit.";
                 break;
             case 7:
                 level1Text.fontSize = 24;
@@ -335,7 +373,7 @@ public class UIFunctions : MonoBehaviour
                 backButton1.SetActive(false);
                 level1Text.alignment = TextAlignmentOptions.Center;
                 currentPrice = priceArray[level1Progress - 9];
-                level1Text.text = "Available Money: $" + money + "\nPrice Per Share: $" + currentPrice + "\nShares Owned: " + shares +  "\nTotal Value: " + (money + shares * currentPrice);
+                level1Text.text = "Available Money: $" + money + "\nPrice Per Share: $" + currentPrice + "\nShares Owned: " + shares + "\nTotal Value: $" + (money + shares * currentPrice);
                 break;
             case 20:
                 returnButton.SetActive(true);
@@ -350,15 +388,15 @@ public class UIFunctions : MonoBehaviour
                     level1Text.fontSize = 22;
                     buyButton.SetActive(false);
                     sellButton.SetActive(false);
-                    
+
                     level1Text.text = "Hopefully this gives you a good idea of how buying stocks can make you money. If you want, you can go back and try to make even more money, or you can just experiment and see what you can do!\n\nTotal Money: $" + (money + shares * currentPrice);
-                    
+
                 }
                 else
                 {
                     level1Text.text = "Sadly, you haven't made enough money to pass. Don't worry though, you can go to the start of the week using the 'Go Back' button and try again!";
                 }
-                
+
                 break;
         }
     }
@@ -386,7 +424,7 @@ public class UIFunctions : MonoBehaviour
 
     public void BuyShare()
     {
-        if(money >= currentPrice)
+        if (money >= currentPrice)
         {
             money -= currentPrice;
             shares++;
@@ -396,7 +434,7 @@ public class UIFunctions : MonoBehaviour
 
     public void SellShare()
     {
-        if(shares > 0)
+        if (shares > 0)
         {
             money += currentPrice;
             shares--;
@@ -404,4 +442,132 @@ public class UIFunctions : MonoBehaviour
         SetLevel1Text();
     }
 
+
+
+    void SetTutorialText()
+    {
+        GameObject currentSphere;
+
+        switch (tutorialProgress)
+        {
+            case 0:
+                level1Text.fontSize = 20;
+                level1Text.alignment = TextAlignmentOptions.Center;
+                level1Text.text = "Welcome to Simple Stocks!\nIn this tutorial, will be going over how to navigate through this program and use it to learn about stocks.\n" +
+                    "To continue, press the NEXT button below.";
+                backButton1.SetActive(false);
+                break;
+                
+            case 1:
+                level1Text.fontSize = 32;
+                level1Text.alignment = TextAlignmentOptions.Center;
+                level1Text.text = "At any point in this tutorial, if you wish to go back to the main menu, you can press the HOME on the bottom left of your screen";
+                backButton1.SetActive(true);
+
+                break;
+            case 2:
+                level1Text.fontSize = 32;
+                level1Text.alignment = TextAlignmentOptions.Left;
+                level1Text.text = "If you would like to go back to the last text box, you can press the BACK button below as well.";
+                break;
+            case 3:
+                level1Text.fontSize = 32;
+                level1Text.text = "For each level, a stock market concept will be defined and discussed. For instance, in level 1, we will be discussing stocks, and how you can use them to make money for yourself.";
+                break;
+            case 4:
+                level1Text.fontSize = 32;
+                testChart.SetActive(false);
+                level1Text.text = "With each new concpet that is introduced, you will be given a short game related to that topic to help you understand it better.";
+                break;
+            case 5:
+                level1Text.fontSize = 32;
+                testChart.SetActive(true);
+                level1Text.text = "Each level will have its own game, but most likely, you will see a stock market chart below. Don't worry about what this means just yet, we will be going over that in the next level.";
+                break;
+            case 6:
+                level1Text.fontSize = 20;
+                level1Text.text = "When the game starts, you will see different buttons appear on this screen corresponding to the concept that is being taught. For instance, in the first level, buttons to buy and sell stocks will appear. You don't have to worry about the prices since all of the money used in this game is fake, so if you lose money here, it's okay!";
+                break;
+            case 7:
+                level1Text.fontSize = 24;
+
+                level1Text.text = "Each level will have a goal for how much money you need to make (or not lose) in order to move on to the next level. If you don't pass a level the first time, you can always go back and restart it to try and get a better score!";
+                break;
+            case 8:
+                level1Text.fontSize = 24;
+                level1Text.alignment = TextAlignmentOptions.Left;
+                line1.SetActive(true);
+                backButton1.SetActive(true);
+                level1Text.text = "On the next screen, the game for this level is going to start. Since we haven't introduced any concepts yet, you can just click NEXT and watch as the chart below changes over time.";
+                break;
+            case 9:
+            case 10:
+            case 11:
+            case 12:
+            case 13:
+            case 14:
+            case 15:
+            case 16:
+            case 17:
+            case 18:
+            case 19:
+
+                line1.SetActive(false);
+                nextButton1.SetActive(true);
+                returnButton.SetActive(false);
+
+                foreach (Transform child in line2.transform)
+                {
+                    GameObject.Destroy(child.gameObject);
+                }
+
+                for (int i = 0; i < tutorialProgress - 8; i++)
+                {
+                    pos = new Vector3(minWidth + ((maxWidth - minWidth) / 10) * i,
+                        minHeight + ((maxHeight - minHeight)) * (priceArrayTutorial[i] - 10) / 20,
+                        0);
+
+
+
+                    currentSphere = Instantiate(circlePrefab, pos, Quaternion.identity);
+
+                    currentSphere.transform.SetParent(line2.transform);
+
+                    if (i != 0)
+                    {
+
+                        GameObject cyl = CreateCylinderBetweenPoints(pos, pos2, 8);
+
+                        cyl.transform.SetParent(line2.transform);
+                    }
+
+                    pos2 = pos;
+                }
+
+                level1Text.fontSize = 32;
+                backButton1.SetActive(false);
+                level1Text.alignment = TextAlignmentOptions.Center;
+                currentPrice = priceArray[tutorialProgress - 9];
+                level1Text.text = "Have fun looking at how the chart below changes over time. Take your time to get use to the menus and the game!";
+                break;
+            case 20:
+                level1Text.fontSize = 24;
+                nextButton1.SetActive(false);
+                level1Text.text = "I hope this tutorial was helpful for you! In the next level, we are going to go over the most important concept in the market: stocks! In order to go back to the main menu, press the HOME button on the bottom left of your screen!";
+
+                break;
+        }
+    }
+
+    public void TutorialBack()
+    {
+        tutorialProgress--;
+        SetTutorialText();
+    }
+
+    public void TutorialNext()
+    {
+        tutorialProgress++;
+        SetTutorialText();
+    }
 }
